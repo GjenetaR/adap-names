@@ -22,7 +22,6 @@ export class StringName implements Name {
 
         this.name = source;
 
-        // todo
         // set noComponents
         this.noComponents = this.getNoComponents();
         
@@ -54,10 +53,6 @@ export class StringName implements Name {
 
         comps.push(current);
         return comps;
-    }
-
-    private getComponents(): string[] {
-        return this.parseComponentsFromDataString(this.name);
     }
 
     private parseStringFromComponents(components: string[]): string {
