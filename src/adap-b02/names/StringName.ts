@@ -28,6 +28,7 @@ export class StringName implements Name {
     }
 
     private parseComponentsFromDataString(data: string): string[] {
+        if (data.length === 0) return [];
         const comps: string[] = [];
         let current = "";
         let escape = false;
@@ -59,11 +60,11 @@ export class StringName implements Name {
         let res: string = '';
                 for (let i = 0; i < components.length;  i++){
                     if (i != 0){
-                        res += this.delimiter;
+                        res += DEFAULT_DELIMITER;
                     }
                     for (let j = 0; j < components[i].length; j++){
                         if ((components[i][j] == DEFAULT_DELIMITER) || (components[i][j] == ESCAPE_CHARACTER)){
-                            res += '\\' + components[i][j];
+                            res += ESCAPE_CHARACTER + components[i][j];
                         }
                         else res += components[i][j];
                     }
@@ -86,7 +87,7 @@ export class StringName implements Name {
     }
 
     public isEmpty(): boolean {
-        return this.name.length === 0; //todo
+        return this.getNoComponents() === 0;
     }
 
     public getNoComponents(): number {

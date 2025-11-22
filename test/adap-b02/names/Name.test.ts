@@ -69,9 +69,9 @@ describe("Edge cases and interoperability tests", () => {
   it("empty name handling", () => {
     let n: Name = new StringName("");
     expect(n.isEmpty()).toBe(true);
-    expect(n.getNoComponents()).toBe(1); // one empty component
+    expect(n.getNoComponents()).toBe(0); 
     n.append("first");
-    expect(n.asString()).toBe(".first");
+    expect(n.asString()).toBe("first");
   });
 
   it("single component name", () => {

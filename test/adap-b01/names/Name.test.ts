@@ -88,4 +88,10 @@ describe("Additional Name methods tests", () => {
     expect(n.getNoComponents()).toBe(4);
   });
 
+  it("test getNoComponents empty", () => {
+    let n = new Name([]);
+    expect(n.getNoComponents()).toBe(0);
+  });
+
+
 });
