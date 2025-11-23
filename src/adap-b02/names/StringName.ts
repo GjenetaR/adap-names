@@ -21,9 +21,6 @@ export class StringName implements Name {
         }
 
         this.name = source;
-
-        // todo
-        // set noComponents
         this.noComponents = this.getNoComponents();
         
     }
@@ -33,6 +30,8 @@ export class StringName implements Name {
         let current = "";
         let escape = false;
 
+        if (data === "") return [];
+
         for (let i = 0; i < data.length; i++) {
             const ch = data[i];
 
@@ -41,6 +40,7 @@ export class StringName implements Name {
                 escape = false;
             } 
             else if (ch === ESCAPE_CHARACTER) {
+                current += ESCAPE_CHARACTER;
                 escape = true;
             } 
             else if (ch === this.delimiter) {
@@ -56,34 +56,22 @@ export class StringName implements Name {
         return comps;
     }
 
-    private getComponents(): string[] {
-        return this.parseComponentsFromDataString(this.name);
-    }
-
-    private parseStringFromComponents(components: string[]): string {
-        let res: string = '';
-                for (let i = 0; i < components.length;  i++){
-                    if (i != 0){
-                        res += this.delimiter;
-                    }
-                    for (let j = 0; j < components[i].length; j++){
-                        if ((components[i][j] == DEFAULT_DELIMITER) || (components[i][j] == ESCAPE_CHARACTER)){
-                            res += '\\' + components[i][j];
-                        }
-                        else res += components[i][j];
-                    }
-                }
-        return res;        
-    }
-
-
     public asString(delimiter: string = this.delimiter): string {
         const components = this.parseComponentsFromDataString(this.name);
-        return components.join(delimiter);
+        console.log(components);
+        return components.join(delimiter).replaceAll(ESCAPE_CHARACTER + this.delimiter, this.delimiter).replaceAll(ESCAPE_CHARACTER + ESCAPE_CHARACTER, ESCAPE_CHARACTER);
     }
 
     public asDataString(): string {
-        return this.name;
+        if (this.delimiter === DEFAULT_DELIMITER) {
+            return this.name;
+        }
+        const components = this.parseComponentsFromDataString(this.name);
+        for (let i = 0; i < components.length; i++) {
+            // We guarantee that every delimiter in component is escaped
+            components[i] = components[i].replaceAll(ESCAPE_CHARACTER + this.delimiter,  this.delimiter);
+        }
+        return components.join(DEFAULT_DELIMITER);
     }
 
     public getDelimiterCharacter(): string {
@@ -91,7 +79,7 @@ export class StringName implements Name {
     }
 
     public isEmpty(): boolean {
-        return this.name.length === 0; //todo
+        return this.getNoComponents() == 0; //todo
     }
 
     public getNoComponents(): number {
@@ -113,7 +101,7 @@ export class StringName implements Name {
             throw new Error("Index out of bounds");
         }
         components[n] = c;
-        this.name = this.parseStringFromComponents(components); 
+        this.name = components.join(this.delimiter); 
     }
 
     public insert(n: number, c: string): void {
@@ -122,15 +110,15 @@ export class StringName implements Name {
             throw new Error("Index out of bounds");
         }
         components.splice(n, 0, c);
-        this.name = this.parseStringFromComponents(components);
-        this.noComponents = this.getNoComponents()
+        this.name = components.join(this.delimiter);
+        this.noComponents += 1;
     }
 
     public append(c: string): void {
         const components = this.parseComponentsFromDataString(this.name);
         components.push(c);
-        this.name = this.parseStringFromComponents(components);
-        this.noComponents = this.getNoComponents();
+        this.name = components.join(this.delimiter);
+        this.noComponents += 1;
     }
 
     public remove(n: number): void {
@@ -139,8 +127,8 @@ export class StringName implements Name {
             throw new Error("Index out of bounds");
         }
         components.splice(n, 1);
-        this.name = this.parseStringFromComponents(components);
-        this.noComponents = this.getNoComponents();
+        this.name = components.join(this.delimiter);
+        this.noComponents -= 1;
 
     }
 
@@ -150,7 +138,7 @@ export class StringName implements Name {
         for (let i = 0; i < count; i++) {
             components.push(other.getComponent(i));
         };
-        this.name = this.parseStringFromComponents(components);
+        this.name = components.join(this.delimiter);
         this.noComponents = this.getNoComponents();
     }
 

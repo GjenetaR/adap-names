@@ -65,11 +65,11 @@ export class Name {
         let res: string = '';
         for (let i = 0; i < this.components.length;  i++){
             if (i != 0){
-                res += this.delimiter;
+                res += DEFAULT_DELIMITER;
             }
             for (let j = 0; j < this.components[i].length; j++){
                 if ((this.components[i][j] == DEFAULT_DELIMITER) || (this.components[i][j] == ESCAPE_CHARACTER)){
-                    res += '\\' + this.components[i][j];
+                    res += ESCAPE_CHARACTER + this.components[i][j];
                 }
                 else res += this.components[i][j];
             }

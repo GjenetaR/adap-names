@@ -6,39 +6,47 @@ export abstract class AbstractName implements Name {
     protected delimiter: string = DEFAULT_DELIMITER;
 
     constructor(delimiter: string = DEFAULT_DELIMITER) {
-        throw new Error("needs implementation or deletion");
+        // Set delimiter (must be a single character)
+        if (delimiter !== undefined) {
+            if (delimiter.length !== 1) {
+                throw new Error("Delimiter must be a single character");
+            }
+            this.delimiter = delimiter;
+        }
     }
 
-    public clone(): Name {
-        throw new Error("needs implementation or deletion");
-    }
+    abstract clone(): Name;
 
-    public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
-    }
+    abstract asString(delimiter: string): string;
 
-    public toString(): string {
-        return this.asDataString();
-    }
 
-    public asDataString(): string {
-        throw new Error("needs implementation or deletion");
-    }
+    abstract asDataString(): string;
 
     public isEqual(other: Name): boolean {
-        throw new Error("needs implementation or deletion");
+        return this.asDataString() === other.asDataString();
     }
 
     public getHashCode(): number {
-        throw new Error("needs implementation or deletion");
+        let string = this.asDataString();
+        let hash = 0;
+
+        if (string.length == 0) return hash;
+
+        for (let i = 0; i < string.length; i++) {
+            let char = string.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+
+        return hash;
     }
 
     public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
+        return this.getNoComponents() === 0;
     }
 
     public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
+        return this.delimiter;
     }
 
     abstract getNoComponents(): number;
@@ -50,8 +58,6 @@ export abstract class AbstractName implements Name {
     abstract append(c: string): void;
     abstract remove(i: number): void;
 
-    public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
-    }
+    abstract concat(other: Name): void;
 
 }
