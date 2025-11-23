@@ -26,6 +26,7 @@ export class StringName implements Name {
     }
 
     private parseComponentsFromDataString(data: string): string[] {
+        if (data.length === 0) return [];
         const comps: string[] = [];
         let current = "";
         let escape = false;
@@ -79,7 +80,7 @@ export class StringName implements Name {
     }
 
     public isEmpty(): boolean {
-        return this.getNoComponents() == 0; //todo
+        return this.getNoComponents() === 0;
     }
 
     public getNoComponents(): number {

@@ -68,7 +68,7 @@ export class Name {
                 res += DEFAULT_DELIMITER;
             }
             for (let j = 0; j < this.components[i].length; j++){
-                if ((this.components[i][j] == DEFAULT_DELIMITER) || (this.components[i][j] == ESCAPE_CHARACTER)){
+                if ((this.components[i][j] === DEFAULT_DELIMITER) || (this.components[i][j] === ESCAPE_CHARACTER)){
                     res += ESCAPE_CHARACTER + this.components[i][j];
                 }
                 else res += this.components[i][j];
