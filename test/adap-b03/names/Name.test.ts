@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 
-import { Name } from "../../../src/adap-b02/names/Name";
-import { StringName } from "../../../src/adap-b02/names/StringName";
-import { StringArrayName } from "../../../src/adap-b02/names/StringArrayName";
+import { Name } from "../../../src/adap-b03/names/Name";
+import { StringName } from "../../../src/adap-b03/names/StringName";
+import { StringArrayName } from "../../../src/adap-b03/names/StringArrayName";
 
 describe("Basic StringName function tests", () => {
   it("test insert", () => {
@@ -74,14 +74,13 @@ describe("Edge cases and interoperability tests", () => {
     expect(n.asString()).toBe("first");
   });
 
-  it("empty name handling array", () => {
+  it("empty name handling", () => {
     let n: Name = new StringArrayName([]);
     expect(n.isEmpty()).toBe(true);
     expect(n.getNoComponents()).toBe(0); // one empty component
     n.append("first");
     expect(n.asString()).toBe("first");
   });
-
 
   it("single component name", () => {
     let n: Name = new StringName("alone");
@@ -130,5 +129,64 @@ describe("Edge cases and interoperability tests", () => {
     n.remove(0);
     n.remove(n.getNoComponents() - 1);
     expect(n.asString()).toBe("first.middle.last");
+  });
+});
+
+
+describe("AbstractName: clone, isEqual, getHashCode", () => {
+  it("clone returns an equal but independent copy", () => {
+    const original: Name = new StringName("a.b.c");
+    const copy: Name = original.clone();
+
+    // same data, different instance
+    expect(copy.asString()).toBe(original.asString());
+    expect(copy).not.toBe(original);
+    expect(copy.getNoComponents()).toBe(3);
+
+    // mutating the clone should not affect the original
+    copy.setComponent(0, "z");
+    expect(copy.getComponent(0)).toBe("z");
+    expect(original.getComponent(0)).toBe("a");
+  });
+
+  it("isEqual returns true for different implementations with same data", () => {
+    const sName: Name = new StringName("x.y.z");
+    const sArray: Name = new StringArrayName(["x", "y", "z"]);
+
+    expect(sName.isEqual(sArray)).toBe(true);
+    expect(sArray.isEqual(sName)).toBe(true);
+  });
+
+  it("isEqual returns false for different data", () => {
+    const a: Name = new StringName("one.two");
+    const b: Name = new StringName("one.two.three");
+
+    expect(a.isEqual(b)).toBe(false);
+  });
+
+  it("getHashCode is stable and equal for equal names", () => {
+    const a: Name = new StringName("alpha.beta");
+    const b: Name = new StringArrayName(["alpha", "beta"]);
+
+    const ha = a.getHashCode();
+    const hb = b.getHashCode();
+
+    // stable across calls
+    expect(a.getHashCode()).toBe(ha);
+    expect(b.getHashCode()).toBe(hb);
+
+    // equal names -> equal hashes
+    expect(ha).toBe(hb);
+  });
+
+  it("getHashCode is zero for empty name and changes when content changes", () => {
+    const empty: Name = new StringName("");
+    expect(empty.getHashCode()).toBe(0);
+
+    const n: Name = new StringName("p.q");
+    const before = n.getHashCode();
+    n.append("r");
+    const after = n.getHashCode();
+    expect(after).not.toBe(before);
   });
 });
