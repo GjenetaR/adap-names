@@ -1,19 +1,30 @@
 import { DEFAULT_DELIMITER, ESCAPE_CHARACTER } from "../common/Printable";
 import { Name } from "./Name";
+import { IllegalArgumentException } from "../common/IllegalArgumentException";
+import { InvalidStateException } from "../common/InvalidStateException";
+import { MethodFailedException } from "../common/MethodFailedException";
 
 export abstract class AbstractName implements Name {
 
     protected delimiter: string = DEFAULT_DELIMITER;
 
     constructor(delimiter: string = DEFAULT_DELIMITER) {
-        // Set delimiter (must be a single character)
-        if (delimiter !== undefined) {
-            if (delimiter.length !== 1) {
-                throw new Error("Delimiter must be a single character");
-            }
-            this.delimiter = delimiter;
-        }
+
+        // Precondition: delimiter must be a single character
+        IllegalArgumentException.assert(
+            typeof delimiter === "string" && delimiter.length === 1,
+            "Delimiter must be a single character"
+        );
+        this.delimiter = delimiter;
+
+        // POSTCONDITION
+        MethodFailedException.assert(
+            this.delimiter === delimiter,
+            "Constructor failed to assign delimiter"
+        );
     }
+
+    abstract checkInvariant(): void;
 
     abstract clone(): Name;
 
@@ -23,7 +34,22 @@ export abstract class AbstractName implements Name {
     abstract asDataString(): string;
 
     public isEqual(other: Name): boolean {
-        return this.asDataString() === other.asDataString();
+        // Precondition: other must be non-null
+        IllegalArgumentException.assert(other !== null, "Other Name must not be null");
+        IllegalArgumentException.assert(
+            typeof other.asDataString === "function",
+            "Other must implement Name"
+        );
+
+        const result = this.asDataString() === other.asDataString();
+
+        // POSTCONDITION
+        MethodFailedException.assert(
+            typeof result === "boolean",
+            "isEqual must return a boolean"
+        );
+
+        return result;
     }
 
     public getHashCode(): number {
@@ -38,15 +64,35 @@ export abstract class AbstractName implements Name {
             hash = hash & hash;
         }
 
+        // POSTCONDITION
+        MethodFailedException.assert(
+            typeof hash === "number",
+            "getHashCode must return a number"
+        );
+
         return hash;
     }
 
     public isEmpty(): boolean {
-        return this.getNoComponents() === 0;
+        const result = this.getNoComponents() === 0;
+
+        // POSTCONDITION
+        MethodFailedException.assert(
+            typeof result === "boolean",
+            "isEmpty must return a boolean"
+        );
+        return result;
     }
 
     public getDelimiterCharacter(): string {
-        return this.delimiter;
+        const result = this.delimiter;
+        // POSTCONDITION
+        MethodFailedException.assert(
+            typeof result === "string" && result.length === 1,
+            "Delimiter must be a single character"
+        );
+
+        return result;
     }
 
     abstract getNoComponents(): number;

@@ -16,6 +16,12 @@ import { Printable } from "../common/Printable";
  */
 export interface Name extends Cloneable, Printable, Equality {
 
+
+    /**     
+     * Checks class invariants; throws exception if violated
+     */ 
+    checkInvariant(): void;
+
     /**
      * Returns true, if number of components == 0; else false
      */
