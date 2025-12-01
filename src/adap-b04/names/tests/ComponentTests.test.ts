@@ -1,3 +1,5 @@
+// included components tests here in order to be availbe in the src order that is used for grading
+
 import { describe, it, expect } from "vitest";
 
 import { IllegalArgumentException } from "../../common/IllegalArgumentException";
